@@ -1,17 +1,18 @@
-FROM php:7
+FROM php:7.2
+#FROM php:7
 
 RUN apt-get update
 
-# Install modules : GD mcrypt iconv
+
+# Install modules : GD iconv
 RUN apt-get install -y \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
-        libmcrypt-dev \
-        libpng12-dev \
+        libpng-dev \
         openssl libssh-dev \
         libnghttp2-dev \
         libhiredis-dev \
-    && docker-php-ext-install iconv mcrypt \
+    && docker-php-ext-install iconv \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install gd
 
@@ -29,7 +30,7 @@ RUN curl -o /root/memcached.zip https://github.com/php-memcached-dev/php-memcach
 
 
 # install php pdo_mysql opcache
-RUN docker-php-ext-install pdo_mysql mysqli iconv mbstring json mcrypt opcache 
+RUN docker-php-ext-install pdo_mysql mysqli iconv mbstring json opcache 
 # WARNING: Disable opcache if you run you php
 RUN echo "opcache.enable_cli=0" >>  /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
 
@@ -47,7 +48,7 @@ RUN echo "opcache.enable_cli=0" >>  /usr/local/etc/php/conf.d/docker-php-ext-opc
 # install swoole
 #RUN pecl install swoole
 RUN cd /root && pecl download swoole && \
-    tar -zxvf swoole-1* && cd swoole-1* && \
+    tar -zxvf swoole-* && cd swoole-* && \
     phpize && \
     ./configure --enable-openssl  --enable-http2  --enable-async-redis && \
     make && make install 
